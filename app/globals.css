@@ -1,0 +1,30 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  /* 英文使用 Playfair Display，中文使用 Noto Serif SC */
+  .font-serif {
+    font-family: var(--font-playfair), "Georgia", "Times New Roman", serif;
+  }
+
+  /* 中文内容使用 Noto Serif SC */
+  body {
+    font-family: var(--font-noto-serif), "Noto Serif SC", "STSong", "SimSun", serif;
+    /* 深色渐变背景 */
+    background: linear-gradient(to bottom, #1a1b4b, #2e1065);
+    min-height: 100vh;
+  }
+}
+
+@layer utilities {
+  /* 发光效果 */
+  .glow-cyan {
+    text-shadow: 0 0 10px rgba(34, 211, 238, 0.5), 0 0 20px rgba(34, 211, 238, 0.3);
+  }
+  
+  .glow-purple {
+    text-shadow: 0 0 10px rgba(196, 181, 253, 0.5), 0 0 20px rgba(196, 181, 253, 0.3);
+  }
+}
+
