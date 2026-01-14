@@ -19,6 +19,7 @@ import { useReadingProgress } from "@/src/hooks/useReadingProgress";
 import { getBookById } from "@/src/data/library";
 import { ArrowLeft, ChevronLeft, ChevronRight } from "lucide-react";
 import Link from "next/link";
+import LoadingSpinner from "@/components/LoadingSpinner";
 
 const AUTH_KEY = "ielts-novel-flow:authenticated";
 
@@ -125,12 +126,12 @@ export default function ReadPage() {
   // 加载中状态
   if (isLoading) {
     return (
-      <main className="min-h-screen flex items-center justify-center bg-gradient-to-b from-[#1a1b4b] to-[#2e1065]">
-        <div className="text-center">
-          <p className="text-slate-300 text-lg mb-2">加载中...</p>
-          <p className="text-slate-400 text-sm">正在读取阅读进度</p>
-        </div>
-      </main>
+      <LoadingSpinner
+        message="正在加载章节..."
+        subMessage="正在读取阅读进度"
+        showTimeoutWarning={true}
+        timeoutMs={6000}
+      />
     );
   }
 

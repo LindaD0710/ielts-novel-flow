@@ -10,11 +10,13 @@ import {
 } from "@/src/data/library";
 import type { BookWithCategory } from "@/src/data/library";
 import Link from "next/link";
+import LoadingSpinner from "@/components/LoadingSpinner";
 
 const AUTH_KEY = "ielts-novel-flow:authenticated";
 
 export default function LibraryPage() {
   const router = useRouter();
+  const [isCheckingAuth, setIsCheckingAuth] = useState(true);
   
   // 当前选中的分类（默认重生）
   const [selectedCategory, setSelectedCategory] = useState<string>(DEFAULT_CATEGORY_ID);
@@ -28,9 +30,24 @@ export default function LibraryPage() {
       const isAuthenticated = localStorage.getItem(AUTH_KEY);
       if (isAuthenticated !== "true") {
         router.push("/login");
+      } else {
+        setIsCheckingAuth(false);
       }
+    } else {
+      setIsCheckingAuth(false);
     }
   }, [router]);
+
+  // 如果正在检查认证状态，显示加载
+  if (isCheckingAuth) {
+    return (
+      <LoadingSpinner
+        message="正在加载图书馆..."
+        subMessage="请稍候"
+        showTimeoutWarning={false}
+      />
+    );
+  }
 
   const handleLogout = () => {
     if (typeof window !== "undefined") {

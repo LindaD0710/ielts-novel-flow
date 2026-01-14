@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
+import LoadingSpinner from "@/components/LoadingSpinner";
 
 export default function Home() {
   const router = useRouter();
@@ -20,10 +21,11 @@ export default function Home() {
 
   // 显示加载状态
   return (
-    <main className="min-h-screen flex items-center justify-center bg-gradient-to-b from-[#1a1b4b] to-[#2e1065]">
-      <div className="text-center">
-        <p className="text-slate-300 text-lg">加载中...</p>
-      </div>
-    </main>
+    <LoadingSpinner
+      message="正在初始化..."
+      subMessage="请稍候"
+      showTimeoutWarning={true}
+      timeoutMs={6000}
+    />
   );
 }
