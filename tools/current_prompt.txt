@@ -79,69 +79,15 @@
 
 ## 故事背景
 **流派**：都市重生
-**故事主题/爽点**：主角重生回到了五年前的订婚宴上，遇到了前世的仇人。通过智慧和实力打脸，展现商业天赋，同时发现家族秘密。
+**故事主题/爽点**：我重生成了死对头公司的助理，发现年轻总裁竟是我青梅竹马。他办公桌暗格里有本日记，最新一页写着：“收购她公司计划暂停。她今天…对我笑了。”
+
 
 ## 核心词汇（必须全部使用）
-- hang
-- trustworthy
-- lumber
-- crime
-- sturdy
-- utilise
-- sanitary
-- stranger
-- fraction
-- modify
-- rage
-- whirl
-- bomb
-- routine
-- savage
-- subordinate
-- sum
-- salute
-- greet
-- jet
-- wasabi
-- catastrophic
-- solo
-- obtrusive
-- cellar
-- perform
-- refuse
-- roast
-- fine
-- germ
-- motivate
-- raid
-- update
-- communicate
-- sway
-- gather
-- require
-- villa
-- goods
-- opt
-- considerate
-- coin
-- controversial
-- observe
-- significance
-- sweep
-- collision
-- seize
-- sociology
-- clause
-- ongoing
-- radioactive
-- carnivore
-- forgive
-- treason
-- stocking
-- volleyball
-- polish
-- swift
-- carpenter
+- offer
+- bureaucracy
+- direct
+- prolong
+- prompt
 
 ## 输出要求
 1. 直接输出小说内容，不要任何说明文字

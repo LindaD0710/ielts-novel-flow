@@ -9,6 +9,7 @@ IELTS Novel Flow - 步骤1：智能选词与 Prompt 生成器
 import json
 import os
 import sys
+import argparse
 from typing import Dict, List
 
 # 导入课程管理器
@@ -21,6 +22,7 @@ PROJECT_ROOT = os.path.dirname(BASE_DIR)
 STORY_CONFIG_FILE = os.path.join(BASE_DIR, "story_config.json")
 PROGRESS_FILE = os.path.join(BASE_DIR, "progress_tracker.json")
 PROMPT_OUTPUT_FILE = os.path.join(BASE_DIR, "current_prompt.txt")
+MISSING_POOL_FILE = os.path.join(BASE_DIR, "missing_ielts_words.txt")
 
 # System Prompt（用于 ChatGPT）
 SYSTEM_PROMPT = """你是晋江文学城金牌写手，同时也是一名深谙"二语习得理论"的雅思名师。
@@ -185,6 +187,20 @@ def main():
     print()
     
     try:
+        parser = argparse.ArgumentParser(description="步骤1：智能选词与 Prompt 生成器")
+        parser.add_argument(
+            "--prefer-missing",
+            action="store_true",
+            help="优先从 missing_ielts_words.txt（补漏词池）里抽取新词，不够再从 pending 补齐",
+        )
+        parser.add_argument(
+            "--missing-file",
+            type=str,
+            default=MISSING_POOL_FILE,
+            help="补漏词池文件路径（默认 tools/missing_ielts_words.txt）",
+        )
+        args = parser.parse_args()
+
         # 1. 初始化课程管理器
         print("📚 初始化课程管理器...")
         manager = CurriculumManager(PROGRESS_FILE)
@@ -197,7 +213,15 @@ def main():
         review_size = 20  # 复习词
         
         print(f"\n📖 获取新单词批次（{batch_size}个）...")
-        target_vocab = manager.get_next_batch(batch_size)
+        prefer_pool: List[str] = []
+        if args.prefer_missing and os.path.exists(args.missing_file):
+            with open(args.missing_file, "r", encoding="utf-8") as f:
+                prefer_pool = [line.strip() for line in f.readlines() if line.strip()]
+            print(f"🎯 补漏模式开启：优先词池 {len(prefer_pool)} 个（来自 {args.missing_file}）")
+        elif args.prefer_missing:
+            print(f"⚠️  补漏模式开启，但找不到词池文件：{args.missing_file}（将退化为正常顺序选词）")
+
+        target_vocab = manager.get_next_batch(batch_size, prefer_pool=prefer_pool)
         
         if not target_vocab:
             raise ValueError("没有可用的新单词，请检查进度追踪文件")

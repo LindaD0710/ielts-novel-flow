@@ -7,7 +7,7 @@ IELTS Novel Flow - 课程管理器
 import json
 import os
 import random
-from typing import List, Dict, Optional
+from typing import List, Dict, Optional, Set
 
 # 获取脚本所在目录的绝对路径
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -54,7 +54,12 @@ class CurriculumManager:
         
         try:
             with open(self.progress_file, "r", encoding="utf-8") as f:
-                return json.load(f)
+                progress = json.load(f)
+                # 兼容旧进度文件：补齐 assigned_words 字段
+                if isinstance(progress, dict) and "assigned_words" not in progress:
+                    progress["assigned_words"] = []
+                    self._save_progress(progress)
+                return progress
         except (json.JSONDecodeError, FileNotFoundError) as e:
             print(f"⚠️  警告：无法加载进度文件 {self.progress_file}: {e}")
             self._initialize_from_source()
@@ -92,25 +97,56 @@ class CurriculumManager:
         with open(self.progress_file, "w", encoding="utf-8") as f:
             json.dump(progress, f, ensure_ascii=False, indent=2)
 
-    def get_next_batch(self, batch_size: int = 20, mark_as_assigned: bool = True) -> List[str]:
+    def get_next_batch(
+        self,
+        batch_size: int = 20,
+        mark_as_assigned: bool = True,
+        prefer_pool: Optional[List[str]] = None,
+    ) -> List[str]:
         """
         获取下一批新单词（从待学习列表中按顺序取出）
+        - 如果提供 prefer_pool，则会优先从 pool 中抽取（补漏），不够再从 pending 补齐
         
         Args:
             batch_size: 批次大小，默认 20 个单词
             mark_as_assigned: 是否立即标记为"已分配"（从 pending_words 移除），默认 True
+            prefer_pool: 优先词池（如 missing_ielts_words.txt）
         
         Returns:
             新单词列表
         """
         pending = self.progress.get("pending_words", [])
-        
-        if len(pending) < batch_size:
-            print(f"⚠️  警告：待学习单词不足 {batch_size} 个，仅返回 {len(pending)} 个")
-            batch = pending
-        else:
-            # 按顺序取出前 batch_size 个
-            batch = pending[:batch_size]
+
+        # 规范化 pool
+        pool_set: Set[str] = set()
+        if prefer_pool:
+            for w in prefer_pool:
+                if isinstance(w, str):
+                    ww = w.strip().lower()
+                    if ww:
+                        pool_set.add(ww)
+
+        # 1) 优先从 pool 抽（保持 pending 的顺序）
+        batch: List[str] = []
+        if pool_set:
+            for w in pending:
+                if w.lower() in pool_set:
+                    batch.append(w)
+                    if len(batch) >= batch_size:
+                        break
+
+        # 2) 不够则从 pending 补齐（仍保持顺序）
+        if len(batch) < batch_size:
+            batch_lc = set([b.lower() for b in batch])
+            for w in pending:
+                if w.lower() in batch_lc:
+                    continue
+                batch.append(w)
+                if len(batch) >= batch_size:
+                    break
+
+        if len(batch) < batch_size:
+            print(f"⚠️  提示：待学习单词不足 {batch_size} 个，仅返回 {len(batch)} 个")
         
         # 如果标记为已分配，立即从 pending_words 中移除，避免重复分配
         if mark_as_assigned and batch:
