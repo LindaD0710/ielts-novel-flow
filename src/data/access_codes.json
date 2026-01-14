@@ -1,0 +1,55 @@
+{
+  "codes": [
+    {
+      "code": "PQRH-ZGJS",
+      "status": "active",
+      "created_at": "2026-01-14T20:27:44.906513",
+      "expires_at": "2027-01-14T20:27:44.906513",
+      "validity_days": 365,
+      "usage_count": 0,
+      "last_used_at": null,
+      "notes": "测试访问码"
+    },
+    {
+      "code": "PVRX-37VB",
+      "status": "active",
+      "created_at": "2026-01-14T20:27:44.906513",
+      "expires_at": "2027-01-14T20:27:44.906513",
+      "validity_days": 365,
+      "usage_count": 0,
+      "last_used_at": null,
+      "notes": "测试访问码"
+    },
+    {
+      "code": "X6TA-Q97H",
+      "status": "active",
+      "created_at": "2026-01-14T20:27:44.906513",
+      "expires_at": "2027-01-14T20:27:44.906513",
+      "validity_days": 365,
+      "usage_count": 0,
+      "last_used_at": null,
+      "notes": "测试访问码"
+    },
+    {
+      "code": "5P8E-G3V4",
+      "status": "active",
+      "created_at": "2026-01-14T20:27:44.906513",
+      "expires_at": "2027-01-14T20:27:44.906513",
+      "validity_days": 365,
+      "usage_count": 0,
+      "last_used_at": null,
+      "notes": "测试访问码"
+    },
+    {
+      "code": "R2JG-FTMD",
+      "status": "active",
+      "created_at": "2026-01-14T20:27:44.906513",
+      "expires_at": "2027-01-14T20:27:44.906513",
+      "validity_days": 365,
+      "usage_count": 0,
+      "last_used_at": null,
+      "notes": "测试访问码"
+    }
+  ],
+  "last_updated": "2026-01-14T20:27:44.906676"
+}
