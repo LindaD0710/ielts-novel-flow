@@ -30,6 +30,7 @@ export default function ReadPage() {
 
   const [selectedWord, setSelectedWord] = useState<Vocabulary | null>(null);
   const [isWordCardOpen, setIsWordCardOpen] = useState(false);
+  const [isInitializing, setIsInitializing] = useState(true);
 
   // 检查登录状态
   useEffect(() => {
@@ -61,6 +62,24 @@ export default function ReadPage() {
     getChapter,
     bookId // 传入 bookId，让 Hook 根据书籍区分进度
   );
+
+  // 页面初始化：等待书籍和章节数据准备好
+  useEffect(() => {
+    // 如果书籍不存在，不需要等待
+    if (!book) {
+      setIsInitializing(false);
+      return;
+    }
+
+    // 如果章节数据已准备好，结束初始化
+    if (!isLoading && currentChapter) {
+      // 稍微延迟一下，确保所有数据都已渲染
+      const timer = setTimeout(() => {
+        setIsInitializing(false);
+      }, 100);
+      return () => clearTimeout(timer);
+    }
+  }, [book, isLoading, currentChapter]);
 
   // 当章节加载完成时，自动保存进度
   useEffect(() => {
@@ -123,12 +142,12 @@ export default function ReadPage() {
     router.refresh(); // Next.js 的刷新方法，不会丢失状态
   };
 
-  // 加载中状态
-  if (isLoading) {
+  // 初始加载状态（页面首次加载时）
+  if (isInitializing || isLoading) {
     return (
       <LoadingSpinner
-        message="正在加载章节..."
-        subMessage="正在读取阅读进度"
+        message="正在加载小说..."
+        subMessage={isLoading ? "正在读取阅读进度" : "正在准备章节内容"}
         showTimeoutWarning={true}
         timeoutMs={6000}
       />
