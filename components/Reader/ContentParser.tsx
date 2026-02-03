@@ -31,6 +31,10 @@ function parseContent(content: string): ParsedSegment[] {
   // 删除 **text** 部分，只保留后面的单词标记
   let cleanedContent = content;
   
+  // 先删除所有反引号包裹的单词标记，转换为普通格式
+  // 匹配 `{word|meaning}` 格式，删除反引号
+  cleanedContent = cleanedContent.replace(/`\{([^|]+)\|([^}]+)\}`/g, '{$1|$2}');
+  
   // 匹配 **text** 后面跟着 {word|meaning} 或 `{word|meaning}` 的模式
   // 允许中间有空白字符、反引号等
   cleanedContent = cleanedContent.replace(/\*\*([^*]+)\*\*\s*`?\{([^|]+)\|([^}]+)\}`?/g, (match, boldText, word, meaning) => {
@@ -70,10 +74,35 @@ function parseContent(content: string): ParsedSegment[] {
     }
 
     // 添加匹配到的单词
+    // 清理释义：删除可能存在的多余信息
+    let cleanedMeaning = match[2].trim();
+    
+    // 删除释义中可能存在的额外说明，如 "- (Wait, list check: ...)" 或类似格式
+    cleanedMeaning = cleanedMeaning.replace(/\s*-\s*\([^)]*\)\s*/g, '').trim();
+    
+    // 如果释义格式是 "word (中文释义)"，只保留括号中的中文部分
+    const parenMatch = cleanedMeaning.match(/\(([^)]+)\)/);
+    if (parenMatch) {
+      cleanedMeaning = parenMatch[1].trim();
+    }
+    
+    // 如果释义中包含多个部分（用 / 分隔），只取第一个部分作为主要释义
+    if (cleanedMeaning.includes('/')) {
+      cleanedMeaning = cleanedMeaning.split('/')[0].trim();
+    }
+    
+    // 最后清理：如果释义中包含英文单词（在中文前），只保留中文部分
+    // 匹配模式：英文单词后跟中文，只保留中文
+    const chineseMatch = cleanedMeaning.match(/[\u4e00-\u9fa5]+/);
+    if (chineseMatch && cleanedMeaning !== chineseMatch[0]) {
+      // 如果包含中文，只保留中文部分
+      cleanedMeaning = cleanedMeaning.replace(/^[a-zA-Z\s]+/, '').trim();
+    }
+    
     segments.push({
       type: "word",
       word: match[1].trim(),
-      meaning: match[2].trim(),
+      meaning: cleanedMeaning,
       content: match[0], // 保留原始格式用于调试
     });
 
